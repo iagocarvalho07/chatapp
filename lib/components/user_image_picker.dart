@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -52,7 +51,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                 const SizedBox(
                   width: 10,
                 ),
-                Text("Adicionar Image")
+                const Text("Adicionar Image")
               ],
             ))
       ],
