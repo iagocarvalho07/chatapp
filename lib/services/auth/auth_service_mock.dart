@@ -4,9 +4,13 @@ import 'package:chatapp/models/chat_user.dart';
 import 'package:chatapp/services/auth/auth_service.dart';
 
 class AuthServiceMock implements AuthService{
+  static Map<String, ChatUser> _users = {};
+  static ChatUser? _currentUser;
+
   @override
-  // TODO: implement currentUser
-  ChatUser? get currentUser => throw UnimplementedError();
+  ChatUser? get currentUser {
+    return _currentUser;
+  }
 
   @override
   Future<void> login(String email, String password) {
