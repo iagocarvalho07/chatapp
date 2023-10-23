@@ -31,12 +31,12 @@ class AuthServiceMock implements AuthService {
 
   @override
   Future<void> singUp(
-      String name, String email, String password, File image) async {
+      String name, String email, String password, File? image) async {
     final newUser = ChatUser(
       id: Random().nextDouble().toString(),
       name: name,
       email: email,
-      imageUrl: image.path,
+      imageUrl: image?.path ?? "/asstes/image",
     );
     _users.putIfAbsent(email, () => newUser);
     _updateUser(newUser);
