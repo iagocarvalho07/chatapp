@@ -6,17 +6,48 @@ import 'package:chatapp/models/chat_user.dart';
 import 'package:chatapp/services/auth/auth_service.dart';
 
 class AuthServiceMock implements AuthService {
-  static Map<String, ChatUser> _users = {};
+  static final _defaultUser = ChatUser(
+    id: 12345.toString(),
+    name: 'iago',
+    email: 'iago@teste2.com',
+    imageUrl: 'assets/imagens/avatar.png',
+  );
+  static final Map<String, ChatUser> _users = {
+    _defaultUser.email: _defaultUser
+  };
   static ChatUser? _currentUser;
   static MultiStreamController<ChatUser?>? _controller;
-  static final _userStreem = Stream<ChatUser?>.multi((p0) {
-    _controller = p0;
-    _updateUser(null);
+  static final _userStream = Stream<ChatUser?>.multi((controller) {
+    _controller = controller;
+    _updateUser(_defaultUser);
   });
 
   @override
   ChatUser? get currentUser {
     return _currentUser;
+  }
+
+  @override
+  Stream<ChatUser?> get userChanges {
+    return _userStream;
+  }
+
+  @override
+  Future<void> signup(
+    String name,
+    String email,
+    String password,
+    File? image,
+  ) async {
+    final newUser = ChatUser(
+      id: Random().nextDouble().toString(),
+      name: name,
+      email: email,
+      imageUrl: image?.path ?? 'assets/imagens/avatar.png',
+    );
+
+    _users.putIfAbsent(email, () => newUser);
+    _updateUser(newUser);
   }
 
   @override
@@ -26,30 +57,11 @@ class AuthServiceMock implements AuthService {
 
   @override
   Future<void> logout() async {
-    return _updateUser(null);
-  }
-
-  @override
-  Future<void> singUp(
-      String name, String email, String password, File? image) async {
-    final newUser = ChatUser(
-      id: Random().nextDouble().toString(),
-      name: name,
-      email: email,
-      imageUrl: image?.path ?? "/asstes/image",
-    );
-    _users.putIfAbsent(email, () => newUser);
-    _updateUser(newUser);
-  }
-
-  @override
-  // TODO: implement userChange
-  Stream<ChatUser?> get userChange {
-    return _userStreem;
+    _updateUser(null);
   }
 
   static void _updateUser(ChatUser? user) {
-    _controller = null;
+    _currentUser = user;
     _controller?.add(_currentUser);
   }
 }
